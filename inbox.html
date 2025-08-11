@@ -1,0 +1,311 @@
+<!--
+  ملف: index.html
+  وصف: نسخة تجريبية جذابة وملونة لموقع "سوق ذي ناعم" بصيغة HTML/CSS/JS فقط.
+  تعليمات سريعة للنشر على GitHub Pages (مجاناً):
+  1. أنشئ Repository جديد باسمك (مثلاً souq-dhinaem).
+  2. ضع هذا الملف index.html في جذر الـ repo.
+  3. اذهب إلى Settings -> Pages -> Source -> اختر branch main و/أو folder / (root) -> Save.
+  4. انتظر دقائق وستحصل على رابط مثل: https://<username>.github.io/<repo>/
+
+  ملاحظات:
+  - الصور الآن مأخوذة من Unsplash (روابط مباشرة). يمكنك استبدالها بصور محلية أو روابط أخرى.
+  - زر "تواصل عبر واتساب" يفتح محادثة عامة. غيّر قيمة data-phone ليكون رقم صاحب المحل (من غير + أو مسافات، مثال: 9677XXXXXXXX).
+  - لإضافة محلات حقيقية: قم بتحرير مصفوفة products في الأسفل في قسم الـ JavaScript.
+
+--><!doctype html>
+
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>سوق ذي ناعم — دليل محلات الملابس والإكسسوارات</title>
+  <meta name="description" content="سوق ذي ناعم - دليل محلات الملابس والإكسسوارات في ذي ناعم. تصفح المنتجات وتواصل مباشرة عبر واتساب." />
+  <link rel="icon" href="data:;base64,iVBORw0KGgo=" />  <style>
+    :root{
+      --bg:#fff8f3;
+      --primary:#ff7a18; /* برتقالي */
+      --accent:#146bff;  /* أزرق */
+      --muted:#6b6b6b;
+      --card:#ffffff;
+      --glass: rgba(255,255,255,0.6);
+      font-family: "Segoe UI", Tahoma, system-ui, -apple-system, 'Noto Naskh Arabic', 'Helvetica Neue', Arial;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:linear-gradient(180deg,var(--bg),#fff);min-height:100vh;color:#222}
+
+    header{
+      background: linear-gradient(90deg,var(--primary),var(--accent));
+      color:white;padding:20px 16px;border-bottom-left-radius:18px;border-bottom-right-radius:18px;
+      display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:space-between
+    }
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{width:56px;height:56px;border-radius:10px;background:rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;font-weight:700}
+    .brand h1{margin:0;font-size:20px;line-height:1}
+    .brand p{margin:0;font-size:12px;opacity:.95}
+
+    .search-area{display:flex;gap:8px;align-items:center}
+    .search{padding:8px 12px;border-radius:10px;border:none;min-width:220px}
+    .category-select{padding:8px;border-radius:10px;border:none}
+
+    main{padding:18px;max-width:1100px;margin:18px auto}
+
+    .hero{display:grid;grid-template-columns:1fr 360px;gap:18px;align-items:center}
+    .hero-card{background:var(--card);padding:18px;border-radius:14px;box-shadow:0 8px 24px rgba(20,107,255,0.06)}
+    .hero h2{margin:0 0 8px 0}
+    .hero p{margin:0;color:var(--muted)}
+    .cta{display:inline-block;margin-top:12px;padding:10px 14px;border-radius:10px;background:linear-gradient(90deg,#ffd194,#ff7a18);color:white;font-weight:700;text-decoration:none}
+
+    .filters{margin:18px 0;display:flex;gap:10px;flex-wrap:wrap}
+    .chip{padding:8px 12px;background:linear-gradient(90deg,#fff,#fff);border-radius:999px;border:1px solid rgba(0,0,0,0.06);cursor:pointer}
+    .chip.active{background:linear-gradient(90deg,var(--primary),var(--accent));color:white;border:none}
+
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+
+    .card{background:var(--card);border-radius:12px;overflow:hidden;box-shadow:0 6px 18px rgba(20,107,255,0.06);display:flex;flex-direction:column}
+    .card img{width:100%;height:180px;object-fit:cover}
+    .card-body{padding:12px;display:flex;flex-direction:column;gap:8px}
+    .title{font-weight:700}
+    .price{color:var(--primary);font-weight:800}
+    .shop{font-size:13px;color:var(--muted)}
+    .actions{margin-top:6px;display:flex;gap:8px}
+    .btn{flex:1;padding:8px;border-radius:10px;border:none;cursor:pointer;font-weight:700}
+    .btn.whatsapp{background:linear-gradient(90deg,#25D366,#128C7E);color:white}
+    .btn.details{background:transparent;border:1px solid rgba(0,0,0,0.08)}
+
+    footer{padding:18px;text-align:center;color:var(--muted);font-size:14px}
+
+    /* modal */
+    .modal{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;padding:20px;visibility:hidden;opacity:0;transition:all .18s}
+    .modal.show{visibility:visible;opacity:1}
+    .modal-card{background:white;border-radius:12px;max-width:720px;width:100%;overflow:hidden}
+    .modal-head{display:flex;gap:12px;padding:12px;border-bottom:1px solid #f1f1f1}
+    .modal-body{display:grid;grid-template-columns:1fr 1fr;padding:12px;gap:12px}
+    .modal img{width:100%;height:260px;object-fit:cover}
+
+    @media (max-width:900px){
+      .hero{grid-template-columns:1fr}
+      .modal-body{grid-template-columns:1fr}
+    }
+
+    /* small touches */
+    .badge{display:inline-block;padding:6px 8px;border-radius:999px;background:var(--glass);font-weight:700}
+  </style></head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="logo">ذ</div>
+      <div>
+        <h1>سوق ذي ناعم</h1>
+        <p>دليل محلات الملابس والإكسسوارات في ذي ناعم</p>
+      </div>
+    </div><div class="search-area">
+  <input id="searchInput" class="search" placeholder="ابحث عن منتج أو محل..." />
+  <select id="categorySelect" class="category-select">
+    <option value="all">كل الفئات</option>
+    <option value="men">ملابس رجالي</option>
+    <option value="women">ملابس نسائي</option>
+    <option value="accessories">إكسسوارات</option>
+    <option value="perfume">عطور</option>
+    <option value="shoes">أحذية</option>
+  </select>
+  <button id="addSample" class="chip">أضف منتج تجريبي</button>
+</div>
+
+  </header>  <main>
+    <section class="hero">
+      <div class="hero-card">
+        <h2>مرحبا بك في سوق ذي ناعم</h2>
+        <p>موقع بسيط لعرض منتجات محلات منطقتك. تصفح، قارن، وتواصل مباشرة مع المحلات عبر واتساب.</p>
+        <a href="#products" class="cta">ابدأ التصفح</a><div style="margin-top:14px">
+      <div class="badge">سهل للاستخدام</div>
+      <div class="badge">مناسب للجوّال</div>
+      <div class="badge">مجاني في البداية</div>
+    </div>
+  </div>
+
+  <div class="hero-card" style="text-align:center">
+    <img src="https://images.unsplash.com/photo-1520975913783-2b6b7b1b9a2f?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=2a64f3b2b7b7a1a7c9f9b25f1b2f1f1f" alt="market" style="width:100%;height:220px;object-fit:cover;border-radius:8px;margin-bottom:10px" />
+    <h3 style="margin:0">اعرض محلك الآن</h3>
+    <p style="color:var(--muted);margin:6px 0">الإضافة مجانية لفترة تجريبية — ابدأ بجلب 3 محلات.</p>
+    <a class="cta" href="mailto:you@example.com">تواصل معنا</a>
+  </div>
+</section>
+
+<section style="margin-top:18px">
+  <div class="filters" id="filterChips"></div>
+</section>
+
+<section id="products">
+  <div class="grid" id="productGrid"></div>
+</section>
+
+  </main>  <footer>
+    &copy; 2025 سوق ذي ناعم — جرب الموقع وعرّض محلاتك. للتعديل أو الدعم: تواصل عبر البريد.
+  </footer>  <!-- Modal -->  <div id="modal" class="modal" role="dialog" aria-hidden="true">
+    <div class="modal-card">
+      <div class="modal-head">
+        <div style="flex:1">
+          <strong id="modalTitle"></strong>
+          <div id="modalShop" style="color:var(--muted);font-size:13px;margin-top:6px"></div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <button id="modalClose" class="chip">إغلاق</button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div>
+          <img id="modalImg" src="" alt="صورة المنتج" />
+        </div>
+        <div>
+          <p id="modalDesc" style="color:var(--muted)"></p>
+          <p style="margin-top:6px"><span class="price" id="modalPrice"></span></p>
+          <div style="margin-top:12px;display:flex;gap:8px">
+            <a id="modalWhatsapp" class="btn whatsapp" href="#" target="_blank">تواصل عبر واتساب</a>
+            <button id="modalCall" class="btn details">اتصل بالمحل</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>  <script>
+    // ====== بيانات تجريبية للمنتجات ======
+    // لتعديل: غيّر أو أضف عناصر هنا. كل عنصر: {id, title, shop, phone, category, price, img, desc}
+    const products = [
+      {id:1,title:'قميص رجالي كلاسيك',shop:'محل النجم',phone:'967712345678',category:'men',price:'5,000 ر.ي',img:'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=5c3d1f4b6b6a7a8b9c9d0e1f',desc:'قميص قطن عالي الجودة، متوفر بمقاسات متعددة.'},
+      {id:2,title:'فستان نسائي سهرة',shop:'محل الجميلة',phone:'967712345679',category:'women',price:'12,000 ر.ي',img:'https://images.unsplash.com/photo-1520975913783-2b6b7b1b9a2f?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=2a64f3b2b7b7a1a7c9f9b25f1b2f1f1f',desc:'فستان مناسب للمناسبات والأعراس، خامة فاخرة ومقاسات مختلفة.'},
+      {id:3,title:'ساعة يد أنيقة',shop:'محل الساعات',phone:'967712345680',category:'accessories',price:'8,000 ر.ي',img:'https://images.unsplash.com/photo-1519741491603-044a2f35f2d3?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=9a8b7c6d5e4f3a2b1c0d9e8f',desc:'ساعة بعقارب وعرض تاريخ. تصميم عصري.'},
+      {id:4,title:'عطر رجالي فاخر',shop:'روائع العطور',phone:'967712345681',category:'perfume',price:'15,000 ر.ي',img:'https://images.unsplash.com/photo-1567427018141-0584cfcbf1e7?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=3e2f1a0b9c8d7e6f5a4b3c2d',desc:'ثلاث مقاسات متوفرة، رائحة تدوم طويلاً.'},
+      {id:5,title:'حذاء رجالي جلد',shop:'محل الأحذية',phone:'967712345682',category:'shoes',price:'10,000 ر.ي',img:'https://images.unsplash.com/photo-1519744792095-2f2205e87b6f?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=6b5c4d3e2f1a0b9c8d7e6f5a',desc:'حذاء جلد طبيعي، متوفر بألوان متعددة.'}
+    ];
+
+    // ====== عناصر DOM ======
+    const productGrid = document.getElementById('productGrid');
+    const filterChips = document.getElementById('filterChips');
+    const searchInput = document.getElementById('searchInput');
+    const categorySelect = document.getElementById('categorySelect');
+    const modal = document.getElementById('modal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalImg = document.getElementById('modalImg');
+    const modalDesc = document.getElementById('modalDesc');
+    const modalPrice = document.getElementById('modalPrice');
+    const modalShop = document.getElementById('modalShop');
+    const modalWhatsapp = document.getElementById('modalWhatsapp');
+    const modalCall = document.getElementById('modalCall');
+    const modalClose = document.getElementById('modalClose');
+    const addSample = document.getElementById('addSample');
+
+    // فئات للعرض كـ chips
+    const categories = [
+      {id:'all', name:'كل الفئات'},
+      {id:'men', name:'ملابس رجالي'},
+      {id:'women', name:'ملابس نسائي'},
+      {id:'accessories', name:'إكسسوارات'},
+      {id:'perfume', name:'عطور'},
+      {id:'shoes', name:'أحذية'}
+    ];
+
+    // إنشاء chips
+    function renderChips(){
+      filterChips.innerHTML='';
+      categories.forEach(c=>{
+        const el = document.createElement('button');
+        el.className = 'chip'+(c.id==='all'?' active':'');
+        el.textContent = c.name;
+        el.onclick = ()=>{
+          document.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));
+          el.classList.add('active');
+          categorySelect.value = c.id;
+          renderProducts();
+        }
+        filterChips.appendChild(el);
+      });
+    }
+
+    // فلترة وبناء البطاقات
+    function renderProducts(){
+      const q = searchInput.value.trim().toLowerCase();
+      const cat = categorySelect.value;
+      productGrid.innerHTML='';
+      const list = products.filter(p=>{
+        const matchQ = (p.title+ ' ' + p.shop + ' ' + p.desc).toLowerCase().includes(q);
+        const matchCat = (cat==='all')? true : (p.category===cat);
+        return matchQ && matchCat;
+      });
+
+      if(list.length===0){
+        productGrid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--muted);padding:40px;background:linear-gradient(180deg,#fff,#fff);border-radius:12px">لا توجد منتجات. أضف منتجات لتبدأ.</div>'
+        return;
+      }
+
+      list.forEach(p=>{
+        const card = document.createElement('div');card.className='card';
+        card.innerHTML = `
+          <img loading="lazy" src="${p.img}" alt="${p.title}"/>
+          <div class="card-body">
+            <div class="title">${p.title}</div>
+            <div class="shop">${p.shop}</div>
+            <div class="price">${p.price}</div>
+            <div class="actions">
+              <button class="btn whatsapp" data-phone="${p.phone}" data-title="${encodeURIComponent(p.title)}">تواصل عبر واتساب</button>
+              <button class="btn details" data-id="${p.id}">التفاصيل</button>
+            </div>
+          </div>
+        `;
+        productGrid.appendChild(card);
+      });
+
+      // إضافة أحداث الأزرار
+      document.querySelectorAll('.btn.whatsapp').forEach(btn=>{
+        btn.onclick = (e)=>{
+          const phone = btn.dataset.phone.replace(/\D/g,'');
+          const title = decodeURIComponent(btn.dataset.title);
+          // رسالة افتراضية. يمكن تعديلها حسب الحاجة.
+          const text = encodeURIComponent(`السلام عليكم، أريد استفسار عن المنتج: ${title}`);
+          // wa.me format: https://wa.me/<phone>?text=<text>
+          const url = `https://wa.me/${phone}?text=${text}`;
+          window.open(url,'_blank');
+        }
+      });
+
+      document.querySelectorAll('.btn.details').forEach(btn=>{
+        btn.onclick = ()=>{
+          const id = Number(btn.dataset.id);
+          const p = products.find(x=>x.id===id);
+          if(!p) return;
+          openModal(p);
+        }
+      });
+    }
+
+    // فتح المودال
+    function openModal(p){
+      modalTitle.textContent = p.title;
+      modalImg.src = p.img;
+      modalDesc.textContent = p.desc;
+      modalPrice.textContent = p.price;
+      modalShop.textContent = 'المحل: ' + p.shop;
+      modalWhatsapp.href = `https://wa.me/${p.phone.replace(/\D/g,'')}?text=${encodeURIComponent('السلام عليكم، أريد هذا المنتج: '+p.title)}`;
+      modalCall.onclick = ()=>{ window.location.href = 'tel:'+p.phone.replace(/\D/g,''); }
+      modal.classList.add('show');
+      modal.setAttribute('aria-hidden','false');
+    }
+
+    modalClose.onclick = ()=>{ modal.classList.remove('show'); modal.setAttribute('aria-hidden','true'); }
+    modal.onclick = (e)=>{ if(e.target===modal) { modal.classList.remove('show'); modal.setAttribute('aria-hidden','true'); } }
+
+    // البحث وفلترة
+    searchInput.oninput = ()=>{ renderProducts(); }
+    categorySelect.onchange = ()=>{ document.querySelectorAll('.chip').forEach(x=>x.classList.remove('active')); document.querySelectorAll('.chip')[categories.findIndex(c=>c.id===categorySelect.value)].classList.add('active'); renderProducts(); }
+
+    // زر لإضافة منتج تجريبي سريع (للغرض التجريبي فقط)
+    addSample.onclick = ()=>{
+      const id = products.length+1;
+      products.push({id, title:'منتج تجريبي '+id, shop:'محل تجريبي', phone:'967712345699', category:'accessories', price:'2,500 ر.ي', img:'https://images.unsplash.com/photo-1523381210419-6ab1f8f1f6b4?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=1a2b3c4d5e6f7g8h9i0j', desc:'وصف تجريبي للمنتج.'});
+      renderProducts();
+    }
+
+    // تشغيل أولي
+    renderChips();
+    renderProducts();
+
+  </script></body>
+</html>
